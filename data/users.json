@@ -1,0 +1,9 @@
+[
+  {
+    "id": "40ea1a09-5b9d-4192-b922-a2a47d67d3c5",
+    "username": "alice",
+    "email": "admin",
+    "password": "123456",
+    "role": "user"
+  }
+]
