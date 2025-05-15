@@ -52,6 +52,8 @@ fs – Lưu trữ đơn giản bằng file JSON (có thể mở rộng thành c�
 - Partial (biến 1 phần thành optional)
 - Nullable ??
 - Type gurad
-- 
+- Type alipas
+
+
 
 
