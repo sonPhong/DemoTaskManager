@@ -8,7 +8,9 @@ exports.updateTaskStatus = updateTaskStatus;
 exports.deleteTask = deleteTask;
 const inquirer_1 = __importDefault(require("inquirer"));
 const User_1 = require("../models/User");
+// tạo ra hàm lấy thông tin người dùng nhập (chọn checkbox) và gọi hàm tạo task đưa thông tin về xử lý
 async function createTask(taskManager, userManager) {
+    // móc thông tin ra check
     const users = userManager.getAllUsers();
     const admins = users.filter(u => u.role === User_1.UserRole.ADMIN);
     const normalUsers = users.filter(u => u.role === User_1.UserRole.USER);
@@ -20,6 +22,8 @@ async function createTask(taskManager, userManager) {
         console.log('⚠️ Không có người dùng nào để nhận task.');
         return;
     }
+    // lấy thông tin người nhập
+    // xử dụng thư viện inquirer để tạo ra các câu hỏi và nhận thông tin từ người dùng (có checkbox) chọn nhiều cùng lúc không cần nhập)
     const answers = await inquirer_1.default.prompt([
         { name: 'title', type: 'input', message: 'Tên task:' },
         { name: 'description', type: 'input', message: 'Mô tả task (tuỳ chọn):' },
@@ -36,6 +40,7 @@ async function createTask(taskManager, userManager) {
             choices: admins.map(u => ({ name: u.username, value: u.id }))
         }
     ]);
+    // check lại kiểu dữ liệu để đưa về TaskManager.createTask xử lý
     const input = {
         title: answers.title,
         description: answers.description,
