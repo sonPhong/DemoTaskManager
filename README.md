@@ -45,3 +45,13 @@ TypeScript
 Inquirer – CLI prompt
 uuid (tuỳ chọn nếu thay generateID) <==> chả dùng mới đầu dùng test 
 fs – Lưu trữ đơn giản bằng file JSON (có thể mở rộng thành cơ sở dữ liệu sau)
+
+
+## Syntax đã được dùng
+- Optional (khởi tạo biến có thể không tồn tại)
+- Partial (biến 1 phần thành optional)
+- Nullable ??
+- Type gurad
+- 
+
+
