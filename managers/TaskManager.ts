@@ -1,7 +1,8 @@
-import { Task, TaskStatus } from '../models/Task';
+import { Task, TaskStatus, CreateTaskInput } from '../models/Task'; // imporrt thêm 
 import { loadData, saveData } from '../utils/storage';
-import { v4 as uuidv4 } from 'uuid';
 import { debouncedSave } from '../utils/debouncedSave'; // dùng hỗ trợ load file sau 1 time ko liên tục
+
+import { UserManager } from './UserManager';
 
 // gọi generate random id
 import { generateId } from '../utils/generateID';
@@ -10,23 +11,20 @@ const TASKS_FILE = './data/tasks.json';
 
 
 // tạo interface cho đầu vào của hàm tạo task
-interface CreateTaskInput {
-    title: string;
-    description?: string;
-    assignedTo: string[];
-    createdBy: string[];
-}
+// ném qua task r
 
 export class TaskManager {
     private tasks: Task[];
+    private userManager: UserManager;
 
     // dùng debounce để giảm tần suất ghi file
     private saveTasks() {
         debouncedSave(TASKS_FILE, this.tasks);
     }
 
-    constructor() {
+    constructor(userManager: UserManager) {
         this.tasks = loadData<Task>(TASKS_FILE);
+        this.userManager = userManager; // khởi tạo userManager
     }
 
 
@@ -34,9 +32,18 @@ export class TaskManager {
     // dùng optional sai thêm input test và debug khai báo đầu vào
 
     // ====> tạo interface cho input( đầu vào của người dùng) để dễ quản lý và tránh bị ảnh hưởng lỗi optional khi chỉ cần nhập ít thông số còn lại là random)
-    createTask(input: CreateTaskInput): Task {
+    createTask(input: CreateTaskInput): Task | null {
         const { title, description, assignedTo, createdBy } = input;
 
+        //update code
+        // check người được giao task vs người giao task có tồn tại trong danh sách người dùng hay không
+        const invalidAssigned = assignedTo.filter(userId => !this.userManager.getUserById(userId));
+        const invalidCreators = createdBy.filter(userId => !this.userManager.getUserById(userId));
+
+        if (invalidAssigned.length > 0 || invalidCreators.length > 0) {
+            console.error('Lỗi: User không tồn tại:', { invalidAssigned, invalidCreators });
+            return null; // thay đổi thêm ép về null <=====> nhớ check null
+        }
         const newTask: Task = {
             id: generateId(),
             title,
@@ -68,7 +75,8 @@ export class TaskManager {
         if (!task) return null;
 
         // loại bỏ trùng lặp và test syntax (Set)
-        task.assignedTo = [...new Set([...task.assignedTo, ...assignedTo])];
+        const validUsers = assignedTo.filter(id => this.userManager.getUserById(id));
+        task.assignedTo = [...new Set([...task.assignedTo, ...validUsers])];
         this.saveTasks();
         return task;
     }
@@ -77,7 +85,8 @@ export class TaskManager {
     replaceAssignTask(id: string, newAssignedTo: string[]): Task | null {
         const task = this.getTaskById(id);
         if (!task) return null;
-        task.assignedTo = newAssignedTo;
+        const validUsers = newAssignedTo.filter(id => this.userManager.getUserById(id));
+        task.assignedTo = validUsers;
         this.saveTasks();
         return task;
     }

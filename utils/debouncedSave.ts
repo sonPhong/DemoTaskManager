@@ -3,6 +3,7 @@ import path from 'path';
 
 let timeout: NodeJS.Timeout | null = null;
 
+// dùng gêneric
 export function debouncedSave<T>(filePath: string, data: T, delay: number = 1000) {
   if (timeout) clearTimeout(timeout);
 

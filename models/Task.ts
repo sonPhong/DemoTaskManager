@@ -13,3 +13,10 @@ export interface Task {
     createdAt: string;
     status: TaskStatus;
 }
+
+export interface CreateTaskInput {
+    title: string;
+    description?: string;
+    assignedTo: string[];
+    createdBy: string[];
+}

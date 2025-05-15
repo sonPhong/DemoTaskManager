@@ -1,9 +1,30 @@
 [
   {
-    "id": "40ea1a09-5b9d-4192-b922-a2a47d67d3c5",
-    "username": "alice",
-    "email": "admin",
-    "password": "123456",
+    "id": "vi1D",
+    "username": "phonts",
+    "email": "paoao@ksksk",
+    "password": "1234aaa",
+    "role": "admin"
+  },
+  {
+    "id": "2z4m",
+    "username": "plaal",
+    "email": "păpl@mssms",
+    "password": "1234qaz",
+    "role": "admin"
+  },
+  {
+    "id": "mLuh",
+    "username": "www",
+    "email": "palwp@lll",
+    "password": "okoko23",
     "role": "user"
+  },
+  {
+    "id": "krz3",
+    "username": "dlplwp",
+    "email": "plpl1@ss",
+    "password": "232p2p",
+    "role": "admin"
   }
 ]

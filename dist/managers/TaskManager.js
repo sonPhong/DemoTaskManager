@@ -6,19 +6,30 @@ const debouncedSave_1 = require("../utils/debouncedSave"); // dùng hỗ trợ l
 // gọi generate random id
 const generateID_1 = require("../utils/generateID");
 const TASKS_FILE = './data/tasks.json';
+// tạo interface cho đầu vào của hàm tạo task
+// ném qua task r
 class TaskManager {
     // dùng debounce để giảm tần suất ghi file
     saveTasks() {
         (0, debouncedSave_1.debouncedSave)(TASKS_FILE, this.tasks);
     }
-    constructor() {
+    constructor(userManager) {
         this.tasks = (0, storage_1.loadData)(TASKS_FILE);
+        this.userManager = userManager; // khởi tạo userManager
     }
     // nghiên cứu thử xem có dùng decoration cho hàm này được không
     // dùng optional sai thêm input test và debug khai báo đầu vào
     // ====> tạo interface cho input( đầu vào của người dùng) để dễ quản lý và tránh bị ảnh hưởng lỗi optional khi chỉ cần nhập ít thông số còn lại là random)
     createTask(input) {
         const { title, description, assignedTo, createdBy } = input;
+        //update code
+        // check người được giao task vs người giao task có tồn tại trong danh sách người dùng hay không
+        const invalidAssigned = assignedTo.filter(userId => !this.userManager.getUserById(userId));
+        const invalidCreators = createdBy.filter(userId => !this.userManager.getUserById(userId));
+        if (invalidAssigned.length > 0 || invalidCreators.length > 0) {
+            console.error('Lỗi: User không tồn tại:', { invalidAssigned, invalidCreators });
+            return null; // thay đổi thêm ép về null <=====> nhớ check null
+        }
         const newTask = {
             id: (0, generateID_1.generateId)(),
             title,
@@ -46,7 +57,8 @@ class TaskManager {
         if (!task)
             return null;
         // loại bỏ trùng lặp và test syntax (Set)
-        task.assignedTo = [...new Set([...task.assignedTo, ...assignedTo])];
+        const validUsers = assignedTo.filter(id => this.userManager.getUserById(id));
+        task.assignedTo = [...new Set([...task.assignedTo, ...validUsers])];
         this.saveTasks();
         return task;
     }
@@ -55,7 +67,8 @@ class TaskManager {
         const task = this.getTaskById(id);
         if (!task)
             return null;
-        task.assignedTo = newAssignedTo;
+        const validUsers = newAssignedTo.filter(id => this.userManager.getUserById(id));
+        task.assignedTo = validUsers;
         this.saveTasks();
         return task;
     }

@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.debouncedSave = debouncedSave;
 const fs_1 = __importDefault(require("fs"));
 let timeout = null;
+// dùng gêneric
 function debouncedSave(filePath, data, delay = 1000) {
     if (timeout)
         clearTimeout(timeout);

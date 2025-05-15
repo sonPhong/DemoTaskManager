@@ -1,9 +1,10 @@
-import { User, Role } from '../models/User';
+import { User, UserRole } from '../models/User';
 import { loadData, saveData } from '../utils/storage';
 import { debouncedSave } from '../utils/debouncedSave'; // dùng hỗ trợ load file sau 1 time ko liên tục
+import { generateId } from "../utils/generateID";
 
 // gọi thư viện dùng tạo id 
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid';
 
 const USERS_FILE = './data/users.json';
 
@@ -19,12 +20,12 @@ export class AuthManager {
         this.users = loadData<User>(USERS_FILE);
     }
 
-    register(username: string, password: string, email: string, role: Role = 'user'): User | null {
+    register(username: string, password: string, email: string, role: UserRole): User | null {
         const exists = this.users.find(u => u.username === username);
         if (exists) return null;
 
         const newUser: User = {
-            id: uuidv4(),
+            id: generateId(), // dùng hàm generateId() để tạo id
             username,
             email,
             password,
@@ -33,11 +34,10 @@ export class AuthManager {
 
         this.users.push(newUser);
         this.saveUsers();
+
         return newUser;
     }
 
-
-    // áp dung nullish coalescing operator xử lý null và undefined
     login(username: string, password: string): User | null {
         return this.users.find(u => u.username === username && u.password === password) ?? null;
     }
